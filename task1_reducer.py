@@ -66,7 +66,9 @@ def task1_reducer():
             lst.append(len(st))
         agg_avg = sum(lst)/len(lst)
         main_dict[key]= agg_avg
-    print(main_dict)
+    #print(main_dict)
+    for k in main_dict:
+        print("{}\t{}".format(k, main_dict[k]))
 
 if __name__ == "__main__":
     task1_reducer()
