@@ -1,4 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
+"""
+This program will use two dictionaries to produce the desired result.
+One dictionary to capture the Categories and other to capture videos for each category.
+Once the category dictionary is build, key values for each category will be used to compute the average   
+
+"""
+
+
 
 import csv
 import sys
@@ -6,10 +15,13 @@ from collections import defaultdict
 
 
 def task1_reducer():
-    """ This mapper select tags and return the tag-owner information.
-    Input format: photo_id \t owner \t tags \t date_taken \t place_id \t accuracy
-    Output format: tag \t owner
+    """ This reducer takes input from mapper :: key as  category,videoid and value as country
+        and produces the average number of countries for videos in each category
+        Output: Music: 1.31
+                News & Politics: 1.05
+                ....
     """
+    # Initializing all required variables required to produce the desired putput
     last_category_name = None
     last_video_id = None
     category_name = ""
@@ -17,16 +29,15 @@ def task1_reducer():
     country_name = ""
     cat_dict = defaultdict(dict)
     video_dict = defaultdict(list)
-    
+    # Reading the data from input and looping through each record 
     for line in sys.stdin:
         # Clean input and split it
         lines = line.strip().split("\t")
-        # If line is malformed, we ignore the line and continue to the next line
-        #category_name = lines[0]
-        #video_id = lines[1]
-        #country_name = lines[2]
+        #Splitting the key as key has two values concatenated with comma
         category_name,video_id = lines[0].split(",")
         country_name = lines[1]
+        #Checking if the last category is same as the current category based on that either we insert the video values in to category dict or continue capturing the items into video dict
+        # Conditional driven - Constructs Video Id Dictionary and Category Dictionary
         if not last_category_name or last_category_name != category_name:
             cat_dict[last_category_name] = video_dict
             video_dict = defaultdict(list)
@@ -51,9 +62,10 @@ def task1_reducer():
                 list_cn.append(country_name)
                 video_dict[video_id].append(list_cn)
     cat_dict[last_category_name] = video_dict
+    #Ensuring there are no NULL keys which might cause issues while calculating Averages
     del(cat_dict[None])
     
-    
+    #Reading the category dict and calculating the averages 
     main_dict = defaultdict(list)
     lst = []
     for key,value in cat_dict.items():
@@ -62,11 +74,9 @@ def task1_reducer():
             st = set()
             for i in range(len(v)):
                 st.update(set(v[i]))
-            #print(key,len(st))
             lst.append(len(st))
-        agg_avg = sum(lst)/len(lst)
+        agg_avg = round(sum(lst)/len(lst),2)
         main_dict[key]= agg_avg
-    #print(main_dict)
     for k in main_dict:
         print("{}\t{}".format(k, main_dict[k])) 
 

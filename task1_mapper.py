@@ -1,18 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 
 def task1_mapper():
-    """ This mapper select tags and return the tag-owner information.
-    Input format: photo_id \t owner \t tags \t date_taken \t place_id \t accuracy
-    Output format: tag \t owner
+    """ This mapper select video_id, Category and country information and returns category and video_id as key and country as value.
+    Input format: video_id,trending_date,category_id,category,publish_time,views,likes,dislikes,comment_count,ratings_disabled,video_error_or_removed,country
+    Output format: category_id,video_id \t country
     """
     line_count = 0
     for line in sys.stdin:
         # Clean input and split it
         lines = line.strip().split(",")
         line_count += 1
-        # Check that the line is of the correct format
+        # Check that the line is of the correct format and filtering the HEADER record 
         # If line is malformed, we ignore the line and continue to the next line
         if line_count == 1:
             continue
@@ -26,7 +26,6 @@ def task1_mapper():
             k_key = category+','+videoid
 
             print("{}\t{}".format(k_key, country))
-            #print("{}\t{}\t{}".format(category,videoid,country))
 
 if __name__ == "__main__":
     task1_mapper()
